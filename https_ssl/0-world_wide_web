@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Displays information about the subdomains of a domain
+# shellcheck disable=SC2086
+
+get_info() {
+    dig "$2.$1" | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk -v s="$2" '{print "The subdomain " s " is a " $4 " record and points to " $5}'
+}
+
+if [ -n "$2" ]; then
+    get_info "$1" "$2"
+else
+    for sub in www lb-01 web-01 web-02; do
+        get_info "$1" "$sub"
+    done
+fi
